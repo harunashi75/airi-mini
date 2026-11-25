@@ -1,4 +1,3 @@
-const syncFS = require('node:fs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs/promises');
 const path = require('node:path');
@@ -7,9 +6,7 @@ const { setTimeout: delay } = require('node:timers/promises');
 
 const root = process.cwd();
 const binary = path.resolve(process.argv[2]);
-const wine = process.argv[3] === 'wine';
-const winPath = filename => 'Z:' + filename.replaceAll('/', '\\');
-const profile = path.join(root, '.desktop-build', wine ? 'smoke-win-profile' : 'smoke-linux-profile', String(process.pid));
+const profile = path.join(root, '.desktop-build', 'smoke-linux-profile', String(process.pid));
 const model = path.join(root, 'models', 'gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf');
 const port = 9340;
 const log = path.join(profile, 'airi-desktop.log');
@@ -30,12 +27,9 @@ async function until(description, check, timeout = 35000) {
 
 async function launch() {
     endpoint = null;
-    const common = ['--disable-gpu', '--remote-debugging-port=' + port, '--user-data-dir=' + (wine ? winPath(profile) : profile)];
-    const args = wine ? [binary, ...common, '--no-sandbox'] : [...common, '--ozone-platform=headless'];
-    const fd = wine ? syncFS.openSync(path.join(profile, 'wine.log'), 'a') : null;
-    child = spawn(wine ? 'wine' : binary, args, { env: { ...process.env, APPIMAGE_EXTRACT_AND_RUN: '1' }, stdio: wine ? ['ignore', fd, fd] : 'pipe' });
-    if (wine) syncFS.closeSync(fd);
-    else child.stderr.on('data', buffer => process.stderr.write(buffer));
+    const args = ['--disable-gpu', '--remote-debugging-port=' + port, '--user-data-dir=' + profile, '--ozone-platform=headless'];
+    child = spawn(binary, args, { env: { ...process.env, APPIMAGE_EXTRACT_AND_RUN: '1' }, stdio: 'pipe' });
+    child.stderr.on('data', buffer => process.stderr.write(buffer));
     const targets = await until('Fenêtre Electron introuvable', async () => {
         const response = await fetch('http://127.0.0.1:' + port + '/json/list');
         const pages = await response.json();

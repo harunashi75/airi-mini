@@ -289,6 +289,10 @@ npm start
 Les scripts compilent le moteur natif et incluent les réglages et données d’exemple dans les
 paquets.
 
+Le moteur est compilé avec PyInstaller, qui ne sait pas produire un exécutable pour un autre
+système : construis la version Windows sous Windows (ou sur un runner `windows-latest` de GitHub
+Actions), pas sous Linux. `npm run dist:win` refuse de démarrer ailleurs que sous Windows.
+
 ### Exécuter les tests
 
 ```bash
@@ -296,6 +300,14 @@ paquets.
 node --check web/app.js
 node --check web/menus.js
 node --test tests/test_web.cjs
+```
+
+Les scripts de `tools/smoke/` testent l’application de bureau complète (AppImage Linux, vrai modèle,
+fenêtre Electron sans affichage). Ils ne tournent pas en CI, car ils demandent le modèle GGUF :
+
+```bash
+npm run dist:linux
+node tools/smoke/smoke-linux.cjs dist/AIRI-Mini-*-linux-x64.AppImage
 ```
 
 `pytest` n’est pas nécessaire. Les tests n’ont pas besoin de `llama-cpp-python` ni du modèle GGUF.
