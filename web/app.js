@@ -35,11 +35,100 @@ async function api(path, options = {}) {
     }
     return response;
 }
+// --- Markdown for AIRI's replies -------------------------------------------------------------
+// Built with DOM nodes only (never innerHTML): a reply cannot inject HTML or scripts.
+const INLINE = /(`+)([^`\n]+?)\1|\*\*(?=\S)([^\n]*?\S)\*\*|__(?=\S)([^\n]*?\S)__|~~(?=\S)([^\n]*?\S)~~|\*([^\s*](?:[^*\n]*?[^\s*])?)\*|(?<![\p{L}\p{N}_])_([^\s_](?:[^_\n]*?[^\s_])?)_(?![\p{L}\p{N}_])/gu;
+function renderInline(text, parent) {
+    let last = 0;
+    for (const match of text.matchAll(INLINE)) {
+        if (match.index > last) parent.appendChild(document.createTextNode(text.slice(last, match.index)));
+        const [, , code, bold, boldUnderscore, strike, italic, italicUnderscore] = match;
+        let element;
+        if (code !== undefined) { element = document.createElement('code'); element.textContent = code; }
+        else {
+            element = document.createElement(bold ?? boldUnderscore ? 'strong' : strike ? 'del' : 'em');
+            renderInline(bold ?? boldUnderscore ?? strike ?? italic ?? italicUnderscore, element);
+        }
+        parent.appendChild(element);
+        last = match.index + match[0].length;
+    }
+    if (last < text.length) parent.appendChild(document.createTextNode(text.slice(last)));
+}
+const tableCells = line => line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(cell => cell.trim());
+function renderMarkdown(element, text) {
+    const blocks = [];
+    const lines = text.split('\n');
+    let paragraph = null, list = null, quote = null;
+    const close = () => { paragraph = list = quote = null; };
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        let match;
+        if (/^\s*```/.test(line)) {  // Fenced code, possibly still open while streaming.
+            close();
+            const code = [];
+            while (++i < lines.length && !/^\s*```/.test(lines[i])) code.push(lines[i]);
+            const pre = document.createElement('pre'), inner = document.createElement('code');
+            inner.textContent = code.join('\n'); pre.appendChild(inner); blocks.push(pre);
+        } else if (!line.trim()) {
+            close();
+        } else if ((match = /^\s{0,3}(#{1,6})\s+(.*?)\s*#*\s*$/.exec(line))) {
+            close();
+            const heading = document.createElement('p'); heading.className = 'md-heading';
+            renderInline(match[2], heading); blocks.push(heading);
+        } else if (/^\s{0,3}([-*_])(\s*\1){2,}\s*$/.test(line)) {
+            close(); blocks.push(document.createElement('hr'));
+        } else if (line.includes('|') && i + 1 < lines.length && /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$/.test(lines[i + 1])) {
+            close();
+            const wrapper = document.createElement('div'); wrapper.className = 'md-table';
+            const table = document.createElement('table');
+            const head = document.createElement('tr');
+            for (const cell of tableCells(line)) { const th = document.createElement('th'); renderInline(cell, th); head.appendChild(th); }
+            table.appendChild(head);
+            for (i += 2; i < lines.length && lines[i].includes('|') && lines[i].trim(); i++) {
+                const row = document.createElement('tr');
+                for (const cell of tableCells(lines[i])) { const td = document.createElement('td'); renderInline(cell, td); row.appendChild(td); }
+                table.appendChild(row);
+            }
+            i--;
+            wrapper.appendChild(table); blocks.push(wrapper);
+        } else if ((match = /^\s*([-*+]|\d{1,9}[.)])\s+(.*)$/.exec(line))) {
+            const ordered = /\d/.test(match[1]);
+            if (!list || list.ordered !== ordered) {
+                paragraph = quote = null;
+                list = document.createElement(ordered ? 'ol' : 'ul'); list.ordered = ordered;
+                if (ordered && parseInt(match[1], 10) !== 1) list.setAttribute('start', String(parseInt(match[1], 10)));
+                blocks.push(list);
+            }
+            const item = document.createElement('li'); renderInline(match[2], item); list.appendChild(item);
+        } else if ((match = /^\s*>\s?(.*)$/.exec(line))) {
+            paragraph = list = null;
+            if (!quote) { quote = document.createElement('blockquote'); blocks.push(quote); }
+            else quote.appendChild(document.createElement('br'));
+            renderInline(match[1], quote);
+        } else if (list && /^\s{2,}\S/.test(line)) {  // Continuation of a list item.
+            const item = list.children[list.children.length - 1];
+            item.appendChild(document.createElement('br')); renderInline(line.trim(), item);
+        } else {
+            list = quote = null;
+            if (!paragraph) { paragraph = document.createElement('p'); blocks.push(paragraph); }
+            else paragraph.appendChild(document.createElement('br'));
+            renderInline(line, paragraph);
+        }
+    }
+    element.classList.add('markdown');
+    element.replaceChildren(...blocks);
+}
+function setReplyText(element, text) {
+    element.rawText = text;
+    renderMarkdown(element, text);
+}
 function appendMessage(text, sender, extra = '') {
     $('welcome').hidden = true;
     const div = document.createElement('div');
     div.className = `message ${sender} ${extra}`;
-    div.textContent = text;
+    // AIRI's replies are Markdown; the user's own words and error notices stay plain text.
+    if (sender === 'airi' && !extra.includes('error') && text) setReplyText(div, text);
+    else div.textContent = text;
     $('messagesArea').appendChild(div);
     $('conversationBody').scrollTop = $('conversationBody').scrollHeight;
     return div;
@@ -169,7 +258,7 @@ async function sendMessage(text = $('userInput').value.trim(), { replaceLast = f
                     const event = JSON.parse(line);
                     if (event.type === 'error') throw new Error(event.message);
                     if (event.type === 'delta') {
-                        reply.textContent += event.text;
+                        setReplyText(reply, (reply.rawText || '') + event.text);
                         $('conversationBody').scrollTop = $('conversationBody').scrollHeight;
                     }
                     if (event.type === 'suggestion') suggestion = event.fact;
@@ -204,7 +293,9 @@ async function sendMessage(text = $('userInput').value.trim(), { replaceLast = f
             $('userInput').value = text;
         } else {
             reply.classList.add('error');
-            reply.textContent += `\n${err.message}\nCet échange peut être incomplet ; vérifie l'historique avant de le renvoyer.`;
+            const notice = document.createElement('p'); notice.className = 'md-notice';
+            notice.textContent = `${err.message}\nCet échange peut être incomplet ; vérifie l'historique avant de le renvoyer.`;
+            reply.appendChild(notice);
             $('announcement').textContent = err.message;
             $('userInput').value = text;
         }
