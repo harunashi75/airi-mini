@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">AIRI Mini</title>
+  <defs>
+    <linearGradient id="tile" x1=".12" y1="0" x2=".82" y2="1">
+      <stop stop-color="#5547c7"/>
+      <stop offset="1" stop-color="#211750"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".26" cy=".13" r=".86">
+      <stop stop-color="#ab8eff" stop-opacity=".65"/>
+      <stop offset="1" stop-color="#7161ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shell" x1="0" y1="0" x2=".84" y2="1">
+      <stop stop-color="#fff6fd"/>
+      <stop offset="1" stop-color="#bdb1ff"/>
+    </linearGradient>
+    <linearGradient id="visor" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#231d52"/>
+      <stop offset="1" stop-color="#3b3079"/>
+    </linearGradient>
+    <linearGradient id="spark" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#f4ffed"/>
+      <stop offset="1" stop-color="#87efd9"/>
+    </linearGradient>
+    <path id="speech-shell" d="M205 147h101c61 0 109 47 109 104v20c0 58-48 104-109 104h-67l-49 36c-7 5-16 0-16-8v-33c-45-13-77-52-77-99v-20c0-57 48-104 108-104Z"/>
+  </defs>
+
+  <rect x="8" y="8" width="496" height="496" rx="119" fill="url(#tile)"/>
+  <rect x="8" y="8" width="496" height="496" rx="119" fill="url(#glow)"/>
+  <rect x="9.5" y="9.5" width="493" height="493" rx="117.5" fill="none" stroke="#e6deff" stroke-opacity=".23" stroke-width="3"/>
+
+  <!-- The shell is also a speech bubble. -->
+  <use href="#speech-shell" fill="#1d134d" opacity=".38" transform="translate(0 12)"/>
+  <use href="#speech-shell" fill="url(#shell)"/>
+  <rect x="135" y="189" width="242" height="135" rx="64" fill="url(#visor)"/>
+  <path d="M177 222c11-9 25-14 41-14h46" fill="none" stroke="#b8aeff" stroke-opacity=".35" stroke-width="5" stroke-linecap="round"/>
+
+  <g fill="none" stroke="url(#spark)" stroke-linecap="round">
+    <path d="M190 259q14-20 28 0m76 0q14-20 28 0" stroke-width="14"/>
+    <path d="M242 282q14 16 28 0" stroke-width="9"/>
+  </g>
+
+  <path d="M374 71c2-8 9-8 11 0l6 21c2 6 6 10 12 12l20 6c8 2 8 9 0 11l-20 6c-6 2-10 6-12 12l-6 21c-2 8-9 8-11 0l-6-21c-2-6-6-10-12-12l-21-6c-8-2-8-9 0-11l21-6c6-2 10-6 12-12Z"
+        fill="url(#spark)"/>
+</svg>

@@ -1,0 +1,46 @@
+# --- Données personnelles : jamais dans le dépôt ---
+# Conversations, souvenirs, profil, verrou et sauvegardes .bak (le modèle public est data.example/).
+data/
+*.bak
+# Exports créés depuis l'interface (Paramètres → Exporter toutes mes données).
+airi-export-*.json
+airi-*-*-*-*-*.json
+
+# --- Modèles GGUF (plusieurs Go) : le dossier reste, son contenu non ---
+models/*
+!models/.gitkeep
+
+# --- Environnements et dépendances ---
+venv/
+.venv/
+node_modules/
+
+# --- Sorties de compilation (runtime Windows, Wine, AppImage… plusieurs centaines de Mo) ---
+dist/
+build/
+.desktop-build/
+*.spec
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- Journaux et secrets ---
+logs/
+*.log
+.env
+.env.*
+
+# --- Éditeurs et systèmes ---
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# --- Réglages locaux de Claude Code ---
+.claude/settings.local.json

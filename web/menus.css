@@ -1,0 +1,175 @@
+:root {
+  --menu-ink: var(--text, var(--ink));
+  --menu-surface: var(--panel, var(--surface));
+  --menu-line: var(--line, var(--border));
+  --menu-accent: var(--accent);
+  --menu-hover: #a162a415;
+  --menu-selected: #f3ddec;
+}
+:root[data-theme="dark"] {
+  --menu-hover: #e4afe41b;
+  --menu-selected: #593c5c;
+}
+::selection { background: var(--menu-selected); color: var(--menu-ink); }
+
+.menu-position { anchor-name: --airi-actions; }
+.menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 41px;
+  padding: 0 12px;
+  border: 1px solid var(--menu-line);
+  border-radius: 14px;
+  background: var(--menu-surface);
+  color: var(--menu-ink);
+  font: 600 12px/1.2 system-ui, sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.menu-trigger svg { width: 17px; height: 17px; color: var(--menu-accent); }
+.menu-trigger:hover,
+.menu-position:has(#settingsMenu:popover-open) .settings-trigger { background: var(--menu-hover); }
+.menu-trigger:focus-visible, .menu-list button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.menu-sheet {
+  position: fixed;
+  inset: 86px 20px auto auto;
+  width: min(292px, calc(100vw - 28px));
+  max-height: min(465px, calc(100dvh - 100px));
+  margin: 0;
+  padding: 12px;
+  overflow: auto;
+  border: 1px solid var(--menu-line);
+  border-radius: 19px;
+  background: var(--menu-surface);
+  color: var(--menu-ink);
+  box-shadow: 0 18px 46px -17px #30153667;
+}
+@supports (top: anchor(bottom)) {
+  .menu-sheet {
+    position-anchor: --airi-actions;
+    inset: auto;
+    top: calc(anchor(bottom) + 9px);
+    right: anchor(right);
+    position-try-fallbacks: flip-block;
+  }
+}
+.menu-sheet h2 {
+  margin: 2px 6px 10px;
+  color: var(--menu-ink);
+  font: 400 21px/1.2 Georgia, "Noto Serif", serif;
+}
+.menu-list { display: grid; gap: 3px; }
+.theme-options + .menu-list {
+  margin-top: 9px;
+  padding-top: 9px;
+  border-top: 1px solid var(--menu-line);
+}
+.menu-list button {
+  width: 100%;
+  min-height: 39px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--menu-ink);
+  font: 500 13px/1.3 system-ui, sans-serif;
+  cursor: pointer;
+  text-align: left;
+}
+.menu-list button:hover:not(:disabled) { background: var(--menu-hover); }
+.menu-list button:disabled { opacity: .5; cursor: default; }
+
+.theme-options {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+.theme-options legend {
+  margin: 0 5px 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.theme-options label { position: relative; cursor: pointer; }
+.theme-options label > span {
+  display: grid;
+  place-items: center;
+  min-height: 39px;
+  padding: 3px 5px;
+  border: 1px solid var(--menu-line);
+  border-radius: 11px;
+  font-size: 12px;
+}
+.theme-options input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.theme-options input:checked + span {
+  border-color: var(--menu-accent);
+  background: var(--menu-selected);
+  font-weight: 700;
+}
+.theme-options input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
+.menu-error { margin: 8px 5px 2px; color: var(--menu-accent); font-size: 12px; overflow-wrap: anywhere; }
+
+@supports (appearance: base-select) {
+  #sessions, #sessions::picker(select) { appearance: base-select; }
+  #sessions { cursor: pointer; }
+  #sessions::picker-icon { color: var(--menu-accent); margin-inline-end: 2px; }
+  #sessions::picker(select) {
+    margin-block-start: 7px;
+    min-width: min(220px, calc(100vw - 30px));
+    max-width: min(320px, calc(100vw - 30px));
+    max-height: min(330px, 53dvh);
+    padding: 5px;
+    border: 1px solid var(--menu-line);
+    border-radius: 16px;
+    background: var(--menu-surface);
+    color: var(--menu-ink);
+    box-shadow: 0 18px 40px -16px #30153665;
+  }
+  #sessions option {
+    min-height: 36px;
+    padding: 7px 10px;
+    border-radius: 10px;
+    background: var(--menu-surface);
+    color: var(--menu-ink);
+    cursor: pointer;
+    overflow-wrap: anywhere;
+  }
+  #sessions option:hover { background: var(--menu-hover); }
+  #sessions option:checked { background: var(--menu-selected); font-weight: 650; }
+  #sessions option::checkmark { color: var(--menu-accent); }
+}
+
+@media (max-width: 585px) {
+  .chat-header .header-actions { gap: 6px; }
+  .chat-header .settings-trigger > span { display: none; }
+  .chat-header .settings-trigger { width: 40px; padding: 0; }
+}
+@media (max-width: 395px) {
+  .chat-header .avatar-container h1 {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .chat-header .status { padding-inline: 7px; }
+  .chat-header .icon-button { width: 38px; }
+}
+
+@supports not selector(:popover-open) {
+  .menu-trigger, .menu-sheet { display: none; }
+}

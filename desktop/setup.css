@@ -1,0 +1,65 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, sans-serif;
+  --ink: #33253c;
+  --muted: #705e76;
+  --surface: #fffafd;
+  --border: #79558b26;
+  --accent: #844477;
+  --focus: #a85c9b;
+  --action-ink: #fff8fd;
+  --background: radial-gradient(ellipse at 6% 5%, #f7dbe9, transparent 57%),
+    radial-gradient(ellipse at 94% 94%, #ded4f4, transparent 54%), #f4eaf3;
+  --shadow: 0 22px 65px -27px #4d2c5750;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 24px;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  background: var(--background);
+}
+main {
+  width: min(100%, 500px);
+  padding: 40px clamp(24px, 6vw, 48px);
+  border: 1px solid var(--border);
+  border-radius: 32px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+img { display: block; }
+h1 { font: 400 2rem/1.14 Georgia, "Noto Serif", "Times New Roman", serif; margin: 22px 0 8px; letter-spacing: -.045em; }
+p { color: var(--muted); line-height: 1.55; overflow-wrap: anywhere; }
+progress { display: block; width: 100%; height: 8px; margin-top: 22px; accent-color: var(--accent); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+button {
+  font: 600 .9rem system-ui, sans-serif;
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--ink);
+}
+#choose { background: var(--accent); color: var(--action-ink); }
+button:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+button:disabled { cursor: default; opacity: .55; }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #f5eaf6;
+  --muted: #cdb8d0;
+  --surface: #281e30;
+  --border: #d3acd536;
+  --accent: #8f4c87;
+  --focus: #dd98cf;
+  --menu-accent: #e5a8d3;
+  --background: radial-gradient(ellipse at 6% 7%, #4c2b44, transparent 55%),
+    radial-gradient(ellipse at 98% 97%, #392c53, transparent 62%), #1f1727;
+  --shadow: 0 22px 65px -27px #100a18bb;
+}
+
+.setup-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }

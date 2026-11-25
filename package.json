@@ -1,0 +1,54 @@
+{
+  "name": "airi-mini",
+  "version": "0.1.8",
+  "private": true,
+  "description": "Assistante personnelle locale en français",
+  "author": "AIRI Mini",
+  "desktopName": "airi-mini.desktop",
+  "main": "desktop/main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "backend:build": "node desktop/build-backend.cjs",
+    "dist:linux": "npm run backend:build && electron-builder --linux --x64 --publish never",
+    "dist:win": "npm run backend:build && electron-builder --win --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "45.5.0",
+    "electron-builder": "26.18.1"
+  },
+  "build": {
+    "appId": "local.airi.mini",
+    "productName": "AIRI Mini",
+    "electronFuses": {
+      "runAsNode": false
+    },
+    "icon": "desktop/icon.png",
+    "artifactName": "AIRI-Mini-${version}-${os}-x64.${ext}",
+    "files": [
+      "desktop/main.cjs",
+      "desktop/preload.cjs"
+    ],
+    "extraResources": [
+      { "from": ".desktop-build/${os}/airi-backend", "to": "backend" },
+      { "from": "config", "to": "config", "filter": ["airi.json", "personality.json"] },
+      { "from": "data.example", "to": "data.example", "filter": ["*.json"] },
+      { "from": "web", "to": "web", "filter": ["index.html", "app.js", "style.css", "menus.js", "menus.css"] },
+      { "from": "desktop", "to": "desktop", "filter": ["setup.*", "icon.png", "logo.svg"] },
+      { "from": "desktop/licenses", "to": "licenses" }
+    ],
+    "linux": {
+      "target": "AppImage",
+      "syncDesktopName": true,
+      "category": "Utility"
+    },
+    "win": {
+      "target": ["nsis", "zip"]
+    },
+    "nsis": {
+      "oneClick": false,
+      "createStartMenuShortcut": true,
+      "allowToChangeInstallationDirectory": true,
+      "differentialPackage": false
+    }
+  }
+}

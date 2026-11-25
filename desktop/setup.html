@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; style-src 'self'; script-src 'self'; base-uri 'none'">
+  <title>AIRI Mini</title>
+  <link rel="stylesheet" href="setup.css">
+  <link rel="stylesheet" href="../web/menus.css">
+  <script src="../web/menus.js" defer></script>
+  <script src="setup.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="setup-header">
+      <img src="icon.png" width="64" height="64" alt="">
+      <div class="menu-position">
+        <button type="button" class="menu-trigger settings-trigger" popovertarget="settingsMenu" aria-label="Paramètres">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/><path d="M9 5v4m6 1v4m-5 1v4"/></svg>
+          <span>Paramètres</span>
+        </button>
+        <div id="settingsMenu" class="menu-sheet" popover role="group" aria-labelledby="settingsTitle">
+          <h2 id="settingsTitle">Paramètres</h2>
+          <fieldset id="themeChoices" class="theme-options">
+            <legend>Apparence</legend>
+            <label><input type="radio" name="appearance" value="system" checked><span>Système</span></label>
+            <label><input type="radio" name="appearance" value="light"><span>Clair</span></label>
+            <label><input type="radio" name="appearance" value="dark"><span>Sombre</span></label>
+          </fieldset>
+          <div class="menu-list" data-desktop hidden>
+            <button type="button" id="settingsModel" data-settings-action="chooseModel">Changer de modèle GGUF…</button>
+            <button type="button" data-settings-action="openData">Ouvrir le dossier de données</button>
+            <button type="button" data-settings-action="openLog">Ouvrir le journal</button>
+          </div>
+          <p id="settingsError" class="menu-error" role="status" hidden></p>
+        </div>
+      </div>
+    </div>
+    <div role="status" aria-live="polite">
+      <h1 id="title">Démarrage d’AIRI Mini</h1>
+      <p id="message">Préparation de ton espace…</p>
+    </div>
+    <progress id="progress" aria-label="Chargement"></progress>
+    <div class="actions" id="actions" hidden>
+      <button id="choose" type="button">Choisir un fichier GGUF</button>
+      <button id="retry" type="button">Réessayer</button>
+    </div>
+  </main>
+</body>
+</html>

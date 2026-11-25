@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7ecf4">
+  <title>AIRI Mini · Ton espace</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="stylesheet" href="/assets/menus.css">
+  <script src="/assets/menus.js" defer></script>
+  <script src="/assets/app.js" defer></script>
+</head>
+<body>
+  <main class="chat-container" aria-label="Conversation avec AIRI">
+    <aside class="sidebar" aria-label="Ton espace AIRI">
+      <a class="brand" href="/" aria-label="AIRI Mini, accueil">
+        <img class="brand-mark" src="/assets/logo.svg" width="38" height="38" alt="">
+        <span>AIRI<span class="brand-mini">mini</span></span>
+      </a>
+      <button class="new-conversation" id="newBtn" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Nouvelle conversation</span></button>
+      <nav class="sidebar-nav" aria-label="Gestion des conversations">
+        <div class="section-label">Conversations</div>
+        <div class="session-picker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"/></svg><label for="sessions" class="sr-only">Conversation enregistrée</label><select id="sessions" disabled></select></div>
+        <div class="session-tools">
+          <button type="button" id="renameBtn" disabled>Renommer</button>
+          <button type="button" id="deleteBtn" disabled>Supprimer</button>
+        </div>
+        <form id="renameForm" class="inline-form" hidden>
+          <label for="renameInput" class="sr-only">Nouveau titre</label>
+          <input id="renameInput" maxlength="120" required>
+          <button type="submit">OK</button>
+          <button type="button" id="renameCancel">Annuler</button>
+        </form>
+        <div class="session-search">
+          <label for="searchInput" class="sr-only">Chercher dans les conversations</label>
+          <input id="searchInput" type="search" placeholder="Chercher…" maxlength="200" autocomplete="off" disabled>
+          <ul id="searchResults" class="search-results" aria-label="Résultats de recherche" hidden></ul>
+        </div>
+        <div class="section-label space-label">Outils</div>
+        <button class="nav-button" id="memoryBtn" aria-expanded="false" aria-controls="memoryPanel" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 3 8l9 5 9-5-9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/></svg><span>Souvenirs</span><span class="nav-end"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></button>
+        <button class="nav-button" id="helpBtn" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2-3 4M12 17h.01"/></svg><span>Aide</span></button>
+      </nav>
+      <div class="sidebar-footer"><span class="privacy-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></span><span>Données sur cet appareil</span></div>
+    </aside>
+    <section class="workspace" aria-label="Dialogue">
+      <header class="chat-header">
+        <div class="avatar-container">
+          <img class="avatar" src="/assets/logo.svg" width="37" height="37" alt="">
+          <h1>AIRI</h1>
+        </div>
+        <div class="header-actions menu-position">
+          <div class="status" role="status"><span id="statusDot" class="status-dot"></span><span id="statusText">Connexion…</span></div>
+          <button type="button" class="menu-trigger settings-trigger" popovertarget="settingsMenu" aria-label="Paramètres">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/><path d="M9 5v4m6 1v4m-5 1v4"/></svg>
+            <span>Paramètres</span>
+          </button>
+          <div id="settingsMenu" class="menu-sheet" popover role="group" aria-labelledby="settingsTitle">
+            <h2 id="settingsTitle">Paramètres</h2>
+            <fieldset id="themeChoices" class="theme-options">
+              <legend>Apparence</legend>
+              <label><input type="radio" name="appearance" value="system" checked><span>Système</span></label>
+              <label><input type="radio" name="appearance" value="light"><span>Clair</span></label>
+              <label><input type="radio" name="appearance" value="dark"><span>Sombre</span></label>
+            </fieldset>
+            <div class="menu-list">
+              <button type="button" id="exportAllBtn" disabled>Exporter toutes mes données</button>
+              <button type="button" id="importBtn" disabled>Importer des données…</button>
+              <input type="file" id="importFile" accept="application/json,.json" hidden>
+            </div>
+            <div class="menu-list" data-desktop hidden>
+              <button type="button" id="settingsModel" data-settings-action="chooseModel">Changer de modèle GGUF…</button>
+              <button type="button" data-settings-action="openData">Ouvrir le dossier de données</button>
+              <button type="button" data-settings-action="openLog">Ouvrir le journal</button>
+            </div>
+            <p id="settingsError" class="menu-error" role="status" hidden></p>
+          </div>
+          <button class="icon-button" id="exportBtn" title="Exporter la conversation" aria-label="Exporter la conversation" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V3m-4 4 4-4 4 4M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg></button>
+        </div>
+      </header>
+      <section id="memoryPanel" class="memory-panel" aria-label="Mémoire partagée" hidden>
+        <div class="memory-heading"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 3 8l9 5 9-5-9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/></svg><h2>Souvenirs partagés</h2></div>
+        <p>Ces souvenirs sont partagés entre tes conversations. Les oublier n’efface pas les anciens messages.</p>
+        <ul id="facts"></ul>
+        <form id="memoryForm"><label for="newFact" class="sr-only">Nouveau souvenir</label><input id="newFact" maxlength="1000" required placeholder="Quelque chose à retenir…"><button type="submit">Retenir</button></form>
+      </section>
+      <section id="importPanel" class="memory-panel" aria-label="Importer des données" hidden>
+        <div class="memory-heading"><h2>Importer des données</h2></div>
+        <p id="importSummary"></p>
+        <div class="import-actions">
+          <button type="button" id="importConfirm">Importer conversations et souvenirs</button>
+          <button type="button" id="importAll" hidden>Tout importer et remplacer le profil</button>
+          <button type="button" id="importCancel">Fermer</button>
+        </div>
+      </section>
+      <div id="conversationBody" class="conversation-body">
+        <section id="welcome" class="welcome" aria-label="Bienvenue">
+          <div class="welcome-mark"><img src="/assets/logo.svg" width="96" height="96" alt=""></div>
+          <h2>Bonjour<span id="welcomeGreeting" hidden>, <em id="welcomeName"></em></span></h2>
+          <p>Qu’aimerais-tu faire aujourd’hui&nbsp;?</p>
+          <div class="suggestions" aria-label="Idées pour commencer">
+            <button id="ideaBtn" class="suggestion lilac" disabled><span class="suggestion-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z"/></svg></span><span>Explorer une idée</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+            <button id="projectBtn" class="suggestion rose" disabled><span class="suggestion-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 7-5 5 5 5m8-10 5 5-5 5M14 4l-4 16"/></svg></span><span>Avancer un projet</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+            <button id="talkBtn" class="suggestion pearl" disabled><span class="suggestion-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 4C8 2 2 9 6 16c7 4 14-2 14-12ZM5 20 16 9"/></svg></span><span>Prendre un moment</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+          </div>
+        </section>
+        <div class="messages-area" id="messagesArea" role="log" aria-label="Messages" aria-live="off"></div>
+      </div>
+      <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
+      <footer class="composer-area">
+        <div class="last-actions">
+          <button type="button" id="regenBtn" hidden>Regénérer</button>
+          <button type="button" id="editBtn" hidden>Modifier mon dernier message</button>
+          <span id="editBanner" hidden>Modification de ton dernier message <button type="button" id="cancelEditBtn">Annuler</button></span>
+        </div>
+        <form class="input-area" id="chatForm">
+          <label for="userInput" class="sr-only">Ton message à AIRI</label>
+          <textarea id="userInput" placeholder="Qu’est-ce qui te passe par la tête ?" rows="2" disabled></textarea>
+          <button id="stopBtn" type="button" title="Arrêter la réponse" aria-label="Arrêter la réponse" hidden><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2"/></svg></button>
+          <button id="sendBtn" type="submit" title="Envoyer le message" aria-label="Envoyer le message" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></button>
+        </form>
+        <p class="keyboard-hint"><kbd>Entrée</kbd> pour envoyer <span>·</span> <kbd>Maj + Entrée</kbd> pour une nouvelle ligne</p>
+      </footer>
+    </section>
+  </main>
+</body>
+</html>
