@@ -153,11 +153,11 @@ Redémarre AIRI après une modification manuelle.
 | Option | Valeur initiale | Usage |
 |---|---|---|
 | `model_path` | [Chemin du modèle par défaut](#modèle-gguf) | Chemin absolu ou relatif au dossier AIRI |
-| `n_ctx` | `4096` | Fenêtre de contexte en tokens |
-| `max_tokens` | `512` | Nombre maximal de tokens par réponse |
+| `n_ctx` | `8192` | Fenêtre de contexte en tokens |
+| `max_tokens` | `1024` | Nombre maximal de tokens par réponse |
 | `temperature` | `0.7` | Variation des réponses |
 | `n_threads` | `6` | Threads de calcul CPU |
-| `n_batch` | `256` | Taille des lots de traitement |
+| `n_batch` | `512` | Taille des lots de traitement |
 | `n_gpu_layers` | `0` | Couches GPU. `-1` utilise toutes les couches avec un moteur compatible. |
 | `max_message_chars` | `8000` | Plafond de caractères par message |
 | `max_history_messages` | `40` | Nombre de messages récents candidats au contexte, par paires |
@@ -168,6 +168,21 @@ Redémarre AIRI après une modification manuelle.
 | `port` | `8000` | Port de l’interface Web ouverte avec `app.py` |
 | `open_browser` | `true` | Ouvrir le navigateur après le chargement avec `app.py` |
 | `language` | `fr` | Langue des messages, des commandes et des prompts (fichier `core/locales/<langue>.py`) |
+
+#### Matériel de développement et PC plus modestes
+
+Les valeurs initiales ont été choisies et testées sur un PC avec un Intel Core i5-12400F (6 cœurs),
+32 Go de DDR5, sans GPU (`n_gpu_layers: 0`), et le modèle `gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf`.
+Sur cette machine, le contexte de 8192 tokens reste réactif. Si ton PC est moins puissant :
+
+| Situation | Réglages conseillés |
+|---|---|
+| 8 Go de RAM ou moins, ou CPU ancien | `n_ctx` `4096`, `max_tokens` `512`, `n_batch` `128` |
+| 16 Go de RAM, CPU récent | Les valeurs initiales conviennent |
+| 32 Go de RAM ou plus, longues conversations | `n_ctx` `16384` (le début des réponses sera plus lent sans GPU) |
+
+Règle simple : adapte `n_threads` au nombre de cœurs physiques de ton processeur. Un modèle plus gros
+(7B et plus) demande plus de RAM et répond plus lentement. Dans ce cas, commence par réduire `n_ctx`.
 
 Electron choisit automatiquement un port local pour son moteur. Pour le contexte, AIRI réserve
 `max_tokens` à la réponse et garde une marge pour le gabarit de chat. Elle retire l’historique
